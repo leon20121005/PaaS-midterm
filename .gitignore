@@ -1,0 +1,4 @@
+functions/lib
+functions/node_modules
+firebase-debug.log
+functions/src/chatbotConfig.ts
