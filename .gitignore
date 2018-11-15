@@ -1,4 +1,8 @@
 functions/lib
 functions/node_modules
+quickstart/node_modules
+credentials.json
+token.json
 firebase-debug.log
 functions/src/chatbotConfig.ts
+functions/src/sheetConfig.ts

@@ -8,7 +8,7 @@ export class Member
     name: string
     phone: number
     email: string
-    lindId: string
+    lineId: string
     role: string
     dailyDraw: DailyDraw
 }
@@ -26,7 +26,7 @@ export class Movie
     releaseDate: number
     director: string
     category: string
-    rumtime: number
+    runtime: number
 }
 
 export class Cinema

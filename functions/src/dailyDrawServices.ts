@@ -20,10 +20,10 @@ export const dailyDraw = async function(userId: string, replyToken: string, time
     {
         member.dailyDraw.drawCount++
         member.dailyDraw.lastDrawTime = timestamp
-        contactServices.updateMemberData(member)
-        resultMessage = `簽到成功\n`
+        contactServices.updateMemberDailyDraw(member)
+        resultMessage = `恭喜中獎\n`
         resultMessage += `時間: ${moment(timestamp).tz("Asia/Taipei").format("YYYY-MM-DD HH:mm:ss")}\n`
-        resultMessage += `次數: ${member.dailyDraw.drawCount}`
+        resultMessage += `累積簽到次數: ${member.dailyDraw.drawCount}`
     }
     const lineMessage = lineServices.toTextMessage(resultMessage)
     lineServices.replyMessage(replyToken, lineMessage)

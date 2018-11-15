@@ -14,7 +14,9 @@
     "firebase-functions": "^2.0.3",
     "@line/bot-sdk": "^6.3.0",
     "query-string": "^6.2.0",
-    "moment-timezone": "^0.5.23"
+    "moment-timezone": "^0.5.23",
+    "googleapis": "^27.0.0",
+    "google-auth-library": "^1.2.1"
   },
   "devDependencies": {
     "typescript": "~2.8.3"
