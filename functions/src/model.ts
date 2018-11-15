@@ -27,6 +27,7 @@ export class Movie
     director: string
     category: string
     runtime: number
+    thumbnail: string
 }
 
 export class Cinema

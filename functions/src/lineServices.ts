@@ -1,5 +1,8 @@
 import { Client, Message } from "@line/bot-sdk"
+import * as moment from "moment-timezone"
+
 import { LINE } from "./chatbotConfig"
+import { Movie } from "./model"
 
 const lineClient = new Client(LINE)
 
@@ -92,6 +95,40 @@ export const toCarouselMessage = function(): Message
     return carouselMessage
 }
 
+export const toMoviesCarousel = function(movies: Movie[]): Message
+{
+    let columns = []
+    for (let movie of movies)
+    {
+        columns.push(
+        {
+            thumbnailImageUrl: movie.thumbnail,
+            title: movie.name,
+            // Because of the height limitation for carousel template messages,
+            // the lower part of the text display area will get cut off if the height limitation is exceeded
+            text: getInformationText(movie),
+            // Max: 3
+            actions: [
+                {
+                    type: "postback",
+                    label: "訂票",
+                    data: "action=reserveTickets"
+                }
+            ]
+        })
+    }
+
+    const carouselMessage: Message = {
+        type: "template",
+        altText: "carousel template",
+        template: {
+            type: "carousel",
+            columns: columns
+        }
+    }
+    return carouselMessage
+}
+
 export const replyMessage = function(replyToken: string, lineMessage: Message | Message[]): Promise<any>
 {
     return lineClient.replyMessage(replyToken, lineMessage)
@@ -100,4 +137,12 @@ export const replyMessage = function(replyToken: string, lineMessage: Message | 
 export const pushMessage = function(userId: string, lineMessage: Message | Message[]): Promise<any>
 {
     return lineClient.pushMessage(userId, lineMessage)
+}
+
+const getInformationText = function(movie: Movie): string
+{
+    let information = "上映日期: " + moment(movie.releaseDate).tz("Asia/Taipei").format("YYYY-MM-DD") + "\n"
+    information += "類型: " + movie.category + "\n"
+    information += "片長: " + movie.runtime + "分"
+    return information
 }

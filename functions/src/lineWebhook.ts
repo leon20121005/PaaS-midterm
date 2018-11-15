@@ -7,6 +7,7 @@ import * as queryString from "query-string"
 import { LINE } from "./chatbotConfig"
 import * as actionServices from "./actionServices"
 import * as dailyDrawServices from "./dailyDrawServices"
+import * as movieServices from "./moviesServices"
 import * as lineServices from "./lineServices"
 
 export const chatbotWebhook = functions.https.onRequest(function(request, response): void
@@ -90,6 +91,9 @@ const messageDispatcher = function(userId: string, userIntent: string, replyToke
         case "簽到":
             actionDispatcher(userId, "dailyDraw", replyToken, timestamp)
             break
+        case "列表":
+            actionDispatcher(userId, "showMovies", replyToken, timestamp)
+            break
         default:
             actionDispatcher(userId, null, replyToken, timestamp)
             break
@@ -107,6 +111,11 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
             break
         case "dailyDraw":
             dailyDrawServices.dailyDraw(userId, replyToken, timestamp)
+            break
+        case "showMovies":
+            const movies = await movieServices.getMoviesByReleaseDate()
+            lineMessage = lineServices.toMoviesCarousel(movies)
+            lineServices.replyMessage(replyToken, lineMessage)
             break
         default:
             lineMessage = lineServices.toTextMessage(getErrorMessage(-2))

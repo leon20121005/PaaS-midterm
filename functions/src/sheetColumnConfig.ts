@@ -11,3 +11,16 @@ export const memberColumn = {
     drawCount: "G",
     lastDrawTime: "H",
 }
+
+export const movieColumn = {
+    workspace: "movie",
+    sheetId: "103rFUMAXIimFyBhnr00gGwk5DGF0vHEp9W2nY0z0H9k",
+    gid: "1347498331",
+    id: "A",
+    name: "B",
+    releaseDate: "C",
+    director: "D",
+    category: "E",
+    runtime: "F",
+    thumbnail: "G"
+}
