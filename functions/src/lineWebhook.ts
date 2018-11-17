@@ -8,6 +8,8 @@ import { LINE } from "./chatbotConfig"
 import * as actionServices from "./actionServices"
 import * as dailyDrawServices from "./dailyDrawServices"
 import * as movieServices from "./moviesServices"
+import * as cinemasServices from "./cinemasServices"
+import * as screeningsServices from "./screeningsServices"
 import * as lineServices from "./lineServices"
 
 export const chatbotWebhook = functions.https.onRequest(function(request, response): void
@@ -94,6 +96,9 @@ const messageDispatcher = function(userId: string, userIntent: string, replyToke
         case "列表":
             actionDispatcher(userId, "showMovies", replyToken, timestamp)
             break
+        case "影城":
+            actionDispatcher(userId, "showCinemas", replyToken, timestamp)
+            break
         default:
             actionDispatcher(userId, null, replyToken, timestamp)
             break
@@ -117,6 +122,11 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
             lineMessage = lineServices.toMoviesCarousel(movies)
             lineServices.replyMessage(replyToken, lineMessage)
             break
+        case "showCinemas":
+            const cinemas = await cinemasServices.getCinemas()
+            lineMessage = lineServices.toCinemasCarousel(cinemas)
+            lineServices.replyMessage(replyToken, lineMessage)
+            break
         default:
             lineMessage = lineServices.toTextMessage(getErrorMessage(-2))
             lineServices.replyMessage(replyToken, lineMessage)
@@ -124,11 +134,40 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
     }
 }
 
-const postbackDispatcher = function(userId: string, postbackData: string): void
+const postbackDispatcher = async function(userId: string, postbackData: string): Promise<void>
 {
+    console.log(postbackData)
+    let lineMessage
     const postback = queryString.parse(postbackData)
     switch (postback.action)
     {
+        case "reserveTickets":
+            if (Object.keys(postback).length == 2)
+            {
+                const movies = await movieServices.getMoviesById(postback.movieId)
+                const cinemas = await screeningsServices.getCinemasByMovieId(postback.movieId)
+                if (cinemas == null)
+                {
+                    lineMessage = lineServices.toTextMessage("票已售完")
+                    lineServices.pushMessage(userId, lineMessage)
+                }
+                else
+                {
+                    lineMessage = lineServices.toChoosingCinemaCarousel(movies[0], cinemas)
+                    lineServices.pushMessage(userId, lineMessage)
+                }
+            }
+            else if (Object.keys(postback).length == 3)
+            {
+                const screenings = await screeningsServices.getScreenings(postback.movieId, postback.cinemaId)
+                lineMessage = lineServices.toConfirmingScreeningCarousel(screenings)
+                lineServices.pushMessage(userId, lineMessage)
+            }
+            else if (Object.keys(postback).length == 4)
+            {
+                lineMessage = lineServices.toTextMessage("訂票成功")
+                lineServices.pushMessage(userId, lineMessage)
+            }
         default:
             break
     }

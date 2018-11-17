@@ -24,3 +24,24 @@ export const movieColumn = {
     runtime: "F",
     thumbnail: "G"
 }
+
+export const cinemaColumn = {
+    workspace: "cinema",
+    sheetId: "103rFUMAXIimFyBhnr00gGwk5DGF0vHEp9W2nY0z0H9k",
+    gid: "4134214",
+    id: "A",
+    name: "B",
+    address: "C",
+    phone: "D",
+    thumbnail: "E"
+}
+
+export const screeningColumn = {
+    workspace: "screening",
+    sheetId: "103rFUMAXIimFyBhnr00gGwk5DGF0vHEp9W2nY0z0H9k",
+    gid: "2009492420",
+    id: "A",
+    movieId: "B",
+    cinemaId: "C",
+    showtime: "D"
+}

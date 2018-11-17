@@ -36,13 +36,19 @@ export class Cinema
     name: string
     address: string
     phone: number
+    thumbnail: string
 }
 
 export class Screening
 {
+    constructor()
+    {
+        this.movie = new Movie()
+        this.cinema = new Cinema()
+    }
     id: number
-    movieId: number
-    cinemaId: number
+    movie: Movie
+    cinema: Cinema
     showtime: number
 }
 

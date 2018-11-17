@@ -2,7 +2,7 @@ import { Client, Message } from "@line/bot-sdk"
 import * as moment from "moment-timezone"
 
 import { LINE } from "./chatbotConfig"
-import { Movie } from "./model"
+import { Movie, Cinema, Screening } from "./model"
 
 const lineClient = new Client(LINE)
 
@@ -106,13 +106,120 @@ export const toMoviesCarousel = function(movies: Movie[]): Message
             title: movie.name,
             // Because of the height limitation for carousel template messages,
             // the lower part of the text display area will get cut off if the height limitation is exceeded
-            text: getInformationText(movie),
+            text: getMovieInformationText(movie),
             // Max: 3
             actions: [
                 {
                     type: "postback",
                     label: "訂票",
-                    data: "action=reserveTickets"
+                    data: `action=reserveTickets&movieId=${movie.id}`
+                }
+            ]
+        })
+    }
+
+    const carouselMessage: Message = {
+        type: "template",
+        altText: "carousel template",
+        template: {
+            type: "carousel",
+            columns: columns
+        }
+    }
+    return carouselMessage
+}
+
+export const toCinemasCarousel = function(cinemas: Cinema[]): Message
+{
+    let columns = []
+    for (let cinema of cinemas)
+    {
+        columns.push(
+        {
+            thumbnailImageUrl: cinema.thumbnail,
+            title: cinema.name,
+            // Because of the height limitation for carousel template messages,
+            // the lower part of the text display area will get cut off if the height limitation is exceeded
+            text: getCinemaInformationText(cinema),
+            // Max: 3
+            actions: [
+                {
+                    type: "uri",
+                    label: "開始導航",
+                    uri: "line://nv/location"
+                },
+                {
+                    type: "uri",
+                    label: "撥打電話",
+                    uri: `tel:${cinema.phone}`
+                }
+            ]
+        })
+    }
+
+    const carouselMessage: Message = {
+        type: "template",
+        altText: "carousel template",
+        template: {
+            type: "carousel",
+            columns: columns
+        }
+    }
+    return carouselMessage
+}
+
+export const toChoosingCinemaCarousel = function(movie: Movie, cinemas: Cinema[]): Message
+{
+    let columns = []
+    for (let cinema of cinemas)
+    {
+        columns.push(
+        {
+            thumbnailImageUrl: cinema.thumbnail,
+            title: cinema.name,
+            // Because of the height limitation for carousel template messages,
+            // the lower part of the text display area will get cut off if the height limitation is exceeded
+            text: getCinemaInformationText(cinema),
+            // Max: 3
+            actions: [
+                {
+                    type: "postback",
+                    label: "選擇",
+                    data: `action=reserveTickets&movieId=${movie.id}&cinemaId=${cinema.id}`
+                }
+            ]
+        })
+    }
+
+    const carouselMessage: Message = {
+        type: "template",
+        altText: "carousel template",
+        template: {
+            type: "carousel",
+            columns: columns
+        }
+    }
+    return carouselMessage
+}
+
+export const toConfirmingScreeningCarousel = function(screenings: Screening[]): Message
+{
+    let columns = []
+    for (let screening of screenings)
+    {
+        columns.push(
+        {
+            thumbnailImageUrl: screening.movie.thumbnail,
+            title: screening.movie.name,
+            // Because of the height limitation for carousel template messages,
+            // the lower part of the text display area will get cut off if the height limitation is exceeded
+            text: getScreeningInformationText(screening),
+            // Max: 3
+            actions: [
+                {
+                    type: "postback",
+                    label: "確認場次",
+                    data: `action=reserveTickets&movieId=${screening.movie.id}&cinemaId=${screening.cinema.id}&confirmation=true`
                 }
             ]
         })
@@ -139,10 +246,25 @@ export const pushMessage = function(userId: string, lineMessage: Message | Messa
     return lineClient.pushMessage(userId, lineMessage)
 }
 
-const getInformationText = function(movie: Movie): string
+const getMovieInformationText = function(movie: Movie): string
 {
     let information = "上映日期: " + moment(movie.releaseDate).tz("Asia/Taipei").format("YYYY-MM-DD") + "\n"
     information += "類型: " + movie.category + "\n"
     information += "片長: " + movie.runtime + "分"
+    return information
+}
+
+const getCinemaInformationText = function(cinema: Cinema): string
+{
+    let information = "影城地址: " + cinema.address + "\n"
+    information += "服務專線: " + cinema.phone
+    return information
+}
+
+const getScreeningInformationText = function(screening: Screening): string
+{
+    let information = "時間: " + moment(screening.showtime).tz("Asia/Taipei").format("YYYY-MM-DD hh:mm:ss") + "\n"
+    information += "影城: " + screening.cinema.name + "\n"
+    information += "地點: " + screening.cinema.address
     return information
 }
