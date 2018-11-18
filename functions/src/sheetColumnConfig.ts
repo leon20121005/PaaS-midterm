@@ -45,3 +45,12 @@ export const screeningColumn = {
     cinemaId: "C",
     showtime: "D"
 }
+
+export const reservationColumn = {
+    workspace: "reservation",
+    sheetId: "103rFUMAXIimFyBhnr00gGwk5DGF0vHEp9W2nY0z0H9k",
+    gid: "1008750585",
+    id: "A",
+    screeningId: "B",
+    memberId: "C"
+}

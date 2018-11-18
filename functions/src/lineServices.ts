@@ -2,7 +2,7 @@ import { Client, Message } from "@line/bot-sdk"
 import * as moment from "moment-timezone"
 
 import { LINE } from "./chatbotConfig"
-import { Movie, Cinema, Screening } from "./model"
+import { Movie, Cinema, Screening, Reservation } from "./model"
 
 const lineClient = new Client(LINE)
 
@@ -219,7 +219,7 @@ export const toConfirmingScreeningCarousel = function(screenings: Screening[]): 
                 {
                     type: "postback",
                     label: "確認場次",
-                    data: `action=reserveTickets&movieId=${screening.movie.id}&cinemaId=${screening.cinema.id}&confirmation=true`
+                    data: `action=reserveTickets&movieId=${screening.movie.id}&cinemaId=${screening.cinema.id}&screeningId=${screening.id}`
                 }
             ]
         })
@@ -234,6 +234,76 @@ export const toConfirmingScreeningCarousel = function(screenings: Screening[]): 
         }
     }
     return carouselMessage
+}
+
+export const toTicketsFlexCarousel = function(tickets: Reservation[]): Message
+{
+    let columns = []
+    for (let ticket of tickets)
+    {
+        const contents = {
+            type: "bubble",
+            hero: {
+                type: "image",
+                url: ticket.screening.movie.thumbnail,
+                size: "full",
+                aspectRatio: "20:13",
+                aspectMode: "cover"
+            },
+            body: {
+                type: "box",
+                layout: "vertical",
+                spacing: "md",
+                contents: [
+                    {
+                        type: "text",
+                        text: ticket.screening.movie.name,
+                        weight: "bold"
+                    },
+                    {
+                        type: "box",
+                        layout: "vertical",
+                        contents: [
+                            {
+                                type: "text",
+                                text: `交易序號: ${ticket.id}`,
+                                color: "#666666",
+                                size: "sm"
+                            },
+                            {
+                                type: "text",
+                                text: `時間: ${moment(ticket.screening.showtime).tz("Asia/Taipei").format("YYYY-MM-DD hh:mm:ss")}`,
+                                color: "#666666",
+                                size: "sm"
+                            },
+                            {
+                                type: "text",
+                                text: `影城: ${ticket.screening.cinema.name}`,
+                                color: "#666666",
+                                size: "sm"
+                            },
+                            {
+                                type: "text",
+                                text: `地點: ${ticket.screening.cinema.address}`,
+                                color: "#666666",
+                                size: "sm"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+        columns.push(contents)
+    }
+    const flexMessage: Message = {
+        type: "flex",
+        altText: "flex message",
+        contents: {
+            type: "carousel",
+            contents: columns
+        }
+    }
+    return flexMessage
 }
 
 export const replyMessage = function(replyToken: string, lineMessage: Message | Message[]): Promise<any>

@@ -10,6 +10,7 @@ import * as dailyDrawServices from "./dailyDrawServices"
 import * as movieServices from "./moviesServices"
 import * as cinemasServices from "./cinemasServices"
 import * as screeningsServices from "./screeningsServices"
+import * as reservationServices from "./reservationServices"
 import * as lineServices from "./lineServices"
 
 export const chatbotWebhook = functions.https.onRequest(function(request, response): void
@@ -99,6 +100,9 @@ const messageDispatcher = function(userId: string, userIntent: string, replyToke
         case "影城":
             actionDispatcher(userId, "showCinemas", replyToken, timestamp)
             break
+        case "訂票":
+            actionDispatcher(userId, "showTickets", replyToken, timestamp)
+            break
         default:
             actionDispatcher(userId, null, replyToken, timestamp)
             break
@@ -125,6 +129,11 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
         case "showCinemas":
             const cinemas = await cinemasServices.getCinemas()
             lineMessage = lineServices.toCinemasCarousel(cinemas)
+            lineServices.replyMessage(replyToken, lineMessage)
+            break
+        case "showTickets":
+            const tickets = await reservationServices.getTickets(userId)
+            lineMessage = lineServices.toTicketsFlexCarousel(tickets)
             lineServices.replyMessage(replyToken, lineMessage)
             break
         default:
@@ -165,6 +174,7 @@ const postbackDispatcher = async function(userId: string, postbackData: string):
             }
             else if (Object.keys(postback).length == 4)
             {
+                await reservationServices.reserveTickets(postback.screeningId, userId)
                 lineMessage = lineServices.toTextMessage("訂票成功")
                 lineServices.pushMessage(userId, lineMessage)
             }

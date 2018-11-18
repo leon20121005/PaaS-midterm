@@ -53,3 +53,46 @@ export const getScreenings = async function(movieId: number, cinemaId: number): 
     }
     return screenings
 }
+
+export const getScreeningsById = async function(screeningId: number[]): Promise<Screening[]>
+{
+    const authorization = await sheetServices.authorize()
+    const query = `select ${screeningColumn.id}, ` +
+        `${screeningColumn.movieId}, ` +
+        `${screeningColumn.cinemaId}, ` +
+        `${screeningColumn.showtime} ` +
+        `where ${getConditionExpression(screeningColumn.id, screeningId)}`
+    const values = await sheetServices.querySheet(authorization, query, screeningColumn.sheetId, screeningColumn.gid)
+
+    if (!values.length)
+    {
+        return null
+    }
+    const screenings = []
+    for (let value of values)
+    {
+        const movie = await moviesServices.getMoviesById(value[1])
+        const cinema = await cinemasServices.getCinemasById(value[2])
+        const screening = new Screening()
+        screening.id = Number(value[0])
+        screening.movie = movie[0]
+        screening.cinema = cinema[0]
+        screening.showtime = Number(value[3])
+        screenings.push(screening)
+    }
+    return screenings
+}
+
+const getConditionExpression = function(key: string, values: number | number[]): string
+{
+    if (!Array.isArray(values))
+    {
+        return key + " = " + String(values)
+    }
+    let expression = ""
+    for (let value of values)
+    {
+        expression += key + " = " + value + " or "
+    }
+    return expression.slice(0, -4)
+}

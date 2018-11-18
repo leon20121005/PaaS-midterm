@@ -54,9 +54,14 @@ export class Screening
 
 export class Reservation
 {
+    constructor()
+    {
+        this.screening = new Screening()
+        this.member = new Member()
+    }
     id: number
-    screeningId: number
-    memberId: number
+    screening: Screening
+    member: Member
 }
 
 export class Rating
