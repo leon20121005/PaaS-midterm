@@ -132,7 +132,7 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
             lineServices.replyMessage(replyToken, lineMessage)
             break
         case "showTickets":
-            const tickets = await reservationServices.getTickets(userId)
+            const tickets = await reservationServices.getTicketsByUserId(userId)
             lineMessage = lineServices.toTicketsFlexCarousel(tickets)
             lineServices.replyMessage(replyToken, lineMessage)
             break

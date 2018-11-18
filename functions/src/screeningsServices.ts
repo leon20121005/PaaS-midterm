@@ -56,14 +56,14 @@ export const getScreenings = async function(movieId: number, cinemaId: number): 
     return screenings
 }
 
-export const getScreeningsById = async function(screeningId: number[]): Promise<Screening[]>
+export const getScreeningsById = async function(screeningIds: number | number[]): Promise<Screening[]>
 {
     const authorization = await sheetServices.authorize()
     const query = `select ${screeningColumn.id}, ` +
         `${screeningColumn.movieId}, ` +
         `${screeningColumn.cinemaId}, ` +
         `${screeningColumn.showtime} ` +
-        `where ${getConditionExpression(screeningColumn.id, screeningId)}`
+        `where ${getConditionExpression(screeningColumn.id, screeningIds)}`
     const values = await sheetServices.querySheet(authorization, query, screeningColumn.sheetId, screeningColumn.gid)
 
     if (!values.length)

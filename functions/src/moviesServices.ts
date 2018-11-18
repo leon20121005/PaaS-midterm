@@ -39,7 +39,7 @@ export const getMoviesByReleaseDate = async function(): Promise<Movie[]>
     return movies
 }
 
-export const getMoviesById = async function(movieId: number | number[]): Promise<Movie[]>
+export const getMoviesById = async function(movieIds: number | number[]): Promise<Movie[]>
 {
     const authorization = await sheetServices.authorize()
     const query = `select ${movieColumn.id}, ` +
@@ -49,7 +49,7 @@ export const getMoviesById = async function(movieId: number | number[]): Promise
         `${movieColumn.category}, ` +
         `${movieColumn.runtime}, ` +
         `${movieColumn.thumbnail} ` +
-        `where ${getConditionExpression(movieColumn.id, movieId)}`
+        `where ${getConditionExpression(movieColumn.id, movieIds)}`
     const values = await sheetServices.querySheet(authorization, query, movieColumn.sheetId, movieColumn.gid)
 
     if (!values.length)

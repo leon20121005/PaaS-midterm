@@ -9,7 +9,7 @@ import { Member } from "./model"
 export const dailyDraw = async function(userId: string, replyToken: string, timestamp: number): Promise<void>
 {
     let resultMessage
-    const member = await contactServices.getMember(userId)
+    const member = await contactServices.getMemberByUserId(userId)
 
     if (!isDailyDrawAvailable(member, timestamp))
     {
