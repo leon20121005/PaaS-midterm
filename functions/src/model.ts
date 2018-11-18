@@ -6,7 +6,7 @@ export class Member
     }
     id: number
     name: string
-    phone: number
+    phone: string
     email: string
     lineId: string
     role: string
@@ -35,7 +35,7 @@ export class Cinema
     id: number
     name: string
     address: string
-    phone: number
+    phone: string
     thumbnail: string
 }
 

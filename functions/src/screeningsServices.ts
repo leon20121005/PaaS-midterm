@@ -1,5 +1,7 @@
 const moduleName = "screeningsServices"
 
+import { getConditionExpression } from "./actionServices"
+
 import * as moviesServices from "./moviesServices"
 import * as cinemasServices from "./cinemasServices"
 
@@ -81,18 +83,4 @@ export const getScreeningsById = async function(screeningId: number[]): Promise<
         screenings.push(screening)
     }
     return screenings
-}
-
-const getConditionExpression = function(key: string, values: number | number[]): string
-{
-    if (!Array.isArray(values))
-    {
-        return key + " = " + String(values)
-    }
-    let expression = ""
-    for (let value of values)
-    {
-        expression += key + " = " + value + " or "
-    }
-    return expression.slice(0, -4)
 }

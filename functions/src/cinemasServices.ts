@@ -1,5 +1,7 @@
 const moduleName = "cinemasServices"
 
+import { getConditionExpression } from "./actionServices"
+
 import * as sheetServices from "./sheetServices"
 import { cinemaColumn } from "./sheetColumnConfig"
 import { Cinema } from "./model"
@@ -25,7 +27,7 @@ export const getCinemas = async function(): Promise<Cinema[]>
         cinema.id = Number(value[0])
         cinema.name = value[1]
         cinema.address = value[2]
-        cinema.phone = Number(value[3])
+        cinema.phone = value[3]
         cinema.thumbnail = value[4]
         cinemas.push(cinema)
     }
@@ -54,23 +56,9 @@ export const getCinemasById = async function(cinemaIds: number | number[]): Prom
         cinema.id = Number(value[0])
         cinema.name = value[1]
         cinema.address = value[2]
-        cinema.phone = Number(value[3])
+        cinema.phone = value[3]
         cinema.thumbnail = value[4]
         cinemas.push(cinema)
     }
     return cinemas
-}
-
-const getConditionExpression = function(key: string, values: number | number[]): string
-{
-    if (!Array.isArray(values))
-    {
-        return key + " = " + String(values)
-    }
-    let expression = ""
-    for (let value of values)
-    {
-        expression += key + " = " + value + " or "
-    }
-    return expression.slice(0, -4)
 }

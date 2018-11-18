@@ -1,5 +1,7 @@
 const moduleName = "moviesServices"
 
+import { getConditionExpression } from "./actionServices"
+
 import * as sheetServices from "./sheetServices"
 import { movieColumn } from "./sheetColumnConfig"
 import { Movie } from "./model"
@@ -68,18 +70,4 @@ export const getMoviesById = async function(movieId: number | number[]): Promise
         movies.push(movie)
     }
     return movies
-}
-
-const getConditionExpression = function(key: string, values: number | number[]): string
-{
-    if (!Array.isArray(values))
-    {
-        return key + " = " + String(values)
-    }
-    let expression = ""
-    for (let value of values)
-    {
-        expression += key + " = " + value + " or "
-    }
-    return expression.slice(0, -4)
 }

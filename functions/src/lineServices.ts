@@ -67,10 +67,11 @@ export const toCarouselMessage = function(): Message
 {
     const functions = ["功能1", "功能2", "功能3"]
     const email = "leon20121005@gmail.com"
-    let columns = []
+    const columns = []
     for (const each of functions)
     {
-        columns.push({
+        columns.push(
+        {
             // thumbnailImageUrl: "",
             title: each,
             text: "測試",
@@ -97,7 +98,7 @@ export const toCarouselMessage = function(): Message
 
 export const toMoviesCarousel = function(movies: Movie[]): Message
 {
-    let columns = []
+    const columns = []
     for (let movie of movies)
     {
         columns.push(
@@ -131,7 +132,7 @@ export const toMoviesCarousel = function(movies: Movie[]): Message
 
 export const toCinemasCarousel = function(cinemas: Cinema[]): Message
 {
-    let columns = []
+    const columns = []
     for (let cinema of cinemas)
     {
         columns.push(
@@ -170,7 +171,7 @@ export const toCinemasCarousel = function(cinemas: Cinema[]): Message
 
 export const toChoosingCinemaCarousel = function(movie: Movie, cinemas: Cinema[]): Message
 {
-    let columns = []
+    const columns = []
     for (let cinema of cinemas)
     {
         columns.push(
@@ -204,7 +205,7 @@ export const toChoosingCinemaCarousel = function(movie: Movie, cinemas: Cinema[]
 
 export const toConfirmingScreeningCarousel = function(screenings: Screening[]): Message
 {
-    let columns = []
+    const columns = []
     for (let screening of screenings)
     {
         columns.push(
@@ -238,7 +239,7 @@ export const toConfirmingScreeningCarousel = function(screenings: Screening[]): 
 
 export const toTicketsFlexCarousel = function(tickets: Reservation[]): Message
 {
-    let columns = []
+    const columns = []
     for (let ticket of tickets)
     {
         const contents = {
@@ -272,7 +273,7 @@ export const toTicketsFlexCarousel = function(tickets: Reservation[]): Message
                             },
                             {
                                 type: "text",
-                                text: `時間: ${moment(ticket.screening.showtime).tz("Asia/Taipei").format("YYYY-MM-DD hh:mm:ss")}`,
+                                text: `時間: ${moment(ticket.screening.showtime).tz("Asia/Taipei").format("YYYY-MM-DD hh:mm")}`,
                                 color: "#666666",
                                 size: "sm"
                             },
@@ -284,7 +285,7 @@ export const toTicketsFlexCarousel = function(tickets: Reservation[]): Message
                             },
                             {
                                 type: "text",
-                                text: `地點: ${ticket.screening.cinema.address}`,
+                                text: `地址: ${ticket.screening.cinema.address}`,
                                 color: "#666666",
                                 size: "sm"
                             }
@@ -333,8 +334,8 @@ const getCinemaInformationText = function(cinema: Cinema): string
 
 const getScreeningInformationText = function(screening: Screening): string
 {
-    let information = "時間: " + moment(screening.showtime).tz("Asia/Taipei").format("YYYY-MM-DD hh:mm:ss") + "\n"
+    let information = "時間: " + moment(screening.showtime).tz("Asia/Taipei").format("YYYY-MM-DD hh:mm") + "\n"
     information += "影城: " + screening.cinema.name + "\n"
-    information += "地點: " + screening.cinema.address
+    information += "地址: " + screening.cinema.address
     return information
 }
