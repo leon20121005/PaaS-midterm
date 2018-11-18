@@ -1,6 +1,6 @@
 const moduleName = "lineWebhook"
 
-import * as functions from 'firebase-functions'
+import * as functions from "firebase-functions"
 import { validateSignature, WebhookEvent } from "@line/bot-sdk"
 import * as queryString from "query-string"
 
