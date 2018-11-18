@@ -7,7 +7,7 @@ import { Member } from "./model"
 export const getMemberById = async function(memberId: string): Promise<Member>
 {
     const auth = await sheetServices.authorize()
-    const queryString = `select ${memberColumn.id}, ` +
+    const query = `select ${memberColumn.id}, ` +
         `${memberColumn.name}, ` +
         `${memberColumn.phone}, ` +
         `${memberColumn.email}, ` +
@@ -16,7 +16,7 @@ export const getMemberById = async function(memberId: string): Promise<Member>
         `${memberColumn.drawCount}, ` +
         `${memberColumn.lastDrawTime} ` +
         `where ${memberColumn.id} = ${memberId}`
-    const values = await sheetServices.querySheet(auth, queryString, memberColumn.sheetId, memberColumn.gid)
+    const values = await sheetServices.querySheet(auth, query, memberColumn.sheetId, memberColumn.gid)
 
     if (!values.length)
     {
@@ -37,7 +37,7 @@ export const getMemberById = async function(memberId: string): Promise<Member>
 export const getMemberByUserId = async function(lineId: string): Promise<Member>
 {
     const auth = await sheetServices.authorize()
-    const queryString = `select ${memberColumn.id}, ` +
+    const query = `select ${memberColumn.id}, ` +
         `${memberColumn.name}, ` +
         `${memberColumn.phone}, ` +
         `${memberColumn.email}, ` +
@@ -46,7 +46,7 @@ export const getMemberByUserId = async function(lineId: string): Promise<Member>
         `${memberColumn.drawCount}, ` +
         `${memberColumn.lastDrawTime} ` +
         `where ${memberColumn.lineId} = '${lineId}'`
-    const values = await sheetServices.querySheet(auth, queryString, memberColumn.sheetId, memberColumn.gid)
+    const values = await sheetServices.querySheet(auth, query, memberColumn.sheetId, memberColumn.gid)
 
     if (!values.length)
     {

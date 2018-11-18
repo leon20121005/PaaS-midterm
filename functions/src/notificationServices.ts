@@ -3,7 +3,7 @@ const moduleName = "notificationServices"
 import * as functions from "firebase-functions"
 import * as moment from "moment-timezone"
 
-// import * as groupServices from "./groupServices"
+import * as groupServices from "./groupServices"
 import * as reservationServices from "./reservationServices"
 import * as lineServices from "./lineServices"
 import { Reservation } from './model'
@@ -12,13 +12,13 @@ export const reportAttendance = functions.https.onRequest(async function(request
 {
     const memberCount = request.body.memberCount
     const totalDrawCount = request.body.totalDrawCount
-    // const groups = await groupServices.getGroups()
+    const groups = await groupServices.getGroups()
     const message = getReportText(memberCount, totalDrawCount)
     const lineMessage = lineServices.toTextMessage(message)
-    // for (let group of groups)
-    // {
-    //     lineServices.pushMessage(group.lineId, lineMessage)
-    // }
+    for (let group of groups)
+    {
+        lineServices.pushMessage(group.lineId, lineMessage)
+    }
     response.sendStatus(200)
 })
 

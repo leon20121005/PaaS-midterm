@@ -70,3 +70,10 @@ export class Rating
     movieId: number
     rating: number
 }
+
+export class Group
+{
+    id: number
+    name: string
+    lineId: string
+}

@@ -3,6 +3,7 @@ functions/node_modules
 quickstart/node_modules
 credentials.json
 token.json
+serviceAccountKey.json
 firebase-debug.log
 functions/src/chatbotConfig.ts
 functions/src/sheetConfig.ts

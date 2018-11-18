@@ -1,17 +1,22 @@
 const moduleName = "lineWebhook"
 
+import * as dialogflow from "dialogflow"
 import * as functions from "firebase-functions"
 import { validateSignature, WebhookEvent } from "@line/bot-sdk"
+import * as structjson from "./structjson"
 import * as queryString from "query-string"
 
-import { LINE } from "./chatbotConfig"
+import { LINE, DIALOGFLOW } from "./chatbotConfig"
 import * as actionServices from "./actionServices"
+import * as groupServices from "./groupServices"
 import * as dailyDrawServices from "./dailyDrawServices"
 import * as movieServices from "./moviesServices"
 import * as cinemasServices from "./cinemasServices"
 import * as screeningsServices from "./screeningsServices"
 import * as reservationServices from "./reservationServices"
 import * as lineServices from "./lineServices"
+
+const sessionClient = new dialogflow.SessionsClient({ keyFilename: DIALOGFLOW.path })
 
 export const chatbotWebhook = functions.https.onRequest(function(request, response): void
 {
@@ -80,7 +85,7 @@ const follow = (userId: string, replyToken: string, timestamp: number): void => 
 
 const unfollow = (userId: string): void => console.log("unfollow")
 
-const join = (groupId: string, replyToken: string, timestamp: number): void => console.log("join")
+const join = (groupId: string, replyToken: string, timestamp: number): void => setDialogflowEvent(groupId, "join", replyToken, timestamp)
 
 const leave = (groupId: string): void => console.log("leave")
 
@@ -104,12 +109,70 @@ const messageDispatcher = function(userId: string, userIntent: string, replyToke
             actionDispatcher(userId, "showTickets", replyToken, timestamp)
             break
         default:
-            actionDispatcher(userId, null, replyToken, timestamp)
+            setDialogflowText(userId, userIntent, replyToken, timestamp, groupId)
             break
     }
 }
 
-const actionDispatcher = async function(userId: string, action: string, replyToken: string, timestamp: number, groupId?: string): Promise<void>
+const setDialogflowText = function(userId: string, userIntent: string, replyToken: string, timestamp: number, groupId?: string): void
+{
+    const sessionId = groupId ? groupId : userId
+    const sessionPath = sessionClient.sessionPath(DIALOGFLOW.projectId, sessionId)
+    const request = {
+        session: sessionPath,
+        queryInput: {
+            text: {
+                text: userIntent,
+                languageCode: DIALOGFLOW.languageCode
+            }
+        }
+    }
+    sessionClient.detectIntent(request).then(function(responses)
+    {
+        const result = responses[0].queryResult
+        if (result.intent)
+        {
+            const action = result.action
+            const parameters = structjson.structProtoToJson(result.parameters)
+            const response = result.fulfillmentText
+            actionDispatcher(userId, action, replyToken, timestamp, parameters, response, groupId)
+        }
+    }).catch(function(error)
+    {
+        console.log(error)
+    })
+}
+
+const setDialogflowEvent = function(userId: string, eventName: string, replyToken: string, timestamp: number): void
+{
+    const sessionId = userId
+    const sessionPath = sessionClient.sessionPath(DIALOGFLOW.projectId, sessionId)
+    const request = {
+        session: sessionPath,
+        queryInput: {
+            event: {
+                name: eventName,
+                languageCode: DIALOGFLOW.languageCode,
+            }
+        }
+    }
+    sessionClient.detectIntent(request).then(function(responses)
+    {
+        const result = responses[0].queryResult
+        if (result.intent)
+        {
+            const action = result.action
+            const parameters = structjson.structProtoToJson(result.parameters)
+            const response = result.fulfillmentText
+            actionDispatcher(userId, action, replyToken, timestamp, parameters, response)
+        }
+    }).catch(function(error)
+    {
+        console.log(error)
+    })
+}
+
+const actionDispatcher = async function(userId: string, action: string, replyToken: string, timestamp: number, parameters?: any, response?: string, groupId?: string): Promise<void>
 {
     console.log("In lineWebhook.actionDispatcher: " + action)
     let lineMessage
@@ -135,6 +198,13 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
             const tickets = await reservationServices.getTicketsByUserId(userId)
             lineMessage = lineServices.toTicketsFlexCarousel(tickets)
             lineServices.replyMessage(replyToken, lineMessage)
+            break
+        case "sendTextToGroup":
+            lineMessage = lineServices.toTextMessage(response)
+            lineServices.replyMessage(replyToken, lineMessage)
+            break
+        case "bindGroup":
+            await groupServices.bindGroup(parameters.name, groupId)
             break
         default:
             lineMessage = lineServices.toTextMessage(getErrorMessage(-2))

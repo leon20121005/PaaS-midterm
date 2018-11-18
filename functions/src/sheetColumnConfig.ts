@@ -54,3 +54,12 @@ export const reservationColumn = {
     screeningId: "B",
     memberId: "C"
 }
+
+export const groupColumn = {
+    workspace: "group",
+    sheetId: "103rFUMAXIimFyBhnr00gGwk5DGF0vHEp9W2nY0z0H9k",
+    gid: "424134276",
+    id: "A",
+    name: "B",
+    lineId: "C"
+}
