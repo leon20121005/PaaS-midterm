@@ -3,6 +3,7 @@ const moduleName = "dailyDrawServices"
 import * as moment from "moment-timezone"
 
 import * as contactServices from "./contactServices"
+import * as prizesServices from "./prizesServices"
 import * as lineServices from "./lineServices"
 import { Member } from "./model"
 
@@ -21,9 +22,23 @@ export const dailyDraw = async function(userId: string, replyToken: string, time
         member.dailyDraw.drawCount++
         member.dailyDraw.lastDrawTime = timestamp
         contactServices.updateMemberDailyDraw(member)
-        resultMessage = `恭喜中獎\n`
-        resultMessage += `時間: ${moment(timestamp).tz("Asia/Taipei").format("YYYY-MM-DD HH:mm:ss")}\n`
-        resultMessage += `累積簽到次數: ${member.dailyDraw.drawCount}`
+        const availablePrize = await prizesServices.getAvailablePrize()
+        if (availablePrize != null)
+        {
+            if (getDrawResult())
+            {
+                resultMessage = getWinningPrizeMessage(availablePrize.serialNumber, timestamp, member.dailyDraw.drawCount)
+                prizesServices.writeWinner(availablePrize, member)
+            }
+            else
+            {
+                resultMessage = getLosingPrizeMessage(timestamp, member.dailyDraw.drawCount)
+            }
+        }
+        else
+        {
+            resultMessage = getLosingPrizeMessage(timestamp, member.dailyDraw.drawCount)
+        }
     }
     const lineMessage = lineServices.toTextMessage(resultMessage)
     lineServices.replyMessage(replyToken, lineMessage)
@@ -40,6 +55,33 @@ const isDailyDrawAvailable = function(member: Member, timestamp: number): boolea
         }
     }
     return true
+}
+
+const getDrawResult = function(): boolean
+{
+    if (Math.floor(Math.random() * 10) == 0)
+    {
+        return true
+    }
+    return false
+}
+
+const getWinningPrizeMessage = function(serialNumber: string, timestamp: number, drawCount: number): string
+{
+    let message
+    message = `恭喜中獎\n`
+    message += `中獎序號: ${serialNumber}\n`
+    message += `時間: ${moment(timestamp).tz("Asia/Taipei").format("YYYY-MM-DD HH:mm:ss")}\n`
+    message += `累積簽到次數: ${drawCount}`
+    return message
+}
+
+const getLosingPrizeMessage = function(timestamp: number, drawCount: number): string
+{
+    let message = `可惜沒中...\n`
+    message += `時間: ${moment(timestamp).tz("Asia/Taipei").format("YYYY-MM-DD HH:mm:ss")}\n`
+    message += `累積簽到次數: ${drawCount}`
+    return message
 }
 
 const getErrorMessage = function(errorCode: number): string

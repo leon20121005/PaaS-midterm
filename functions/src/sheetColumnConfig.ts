@@ -63,3 +63,12 @@ export const groupColumn = {
     name: "B",
     lineId: "C"
 }
+
+export const prizeColumn = {
+    workspace: "prize",
+    sheetId: "103rFUMAXIimFyBhnr00gGwk5DGF0vHEp9W2nY0z0H9k",
+    gid: "689761964",
+    id: "A",
+    serial: "B",
+    memberId: "C"
+}

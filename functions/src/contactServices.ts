@@ -4,6 +4,13 @@ import * as sheetServices from "./sheetServices"
 import { memberColumn } from "./sheetColumnConfig"
 import { Member } from "./model"
 
+export const bindMember = async function(name: string, lineId: string): Promise<void>
+{
+    const authorization = await sheetServices.authorize()
+    const range = encodeURI(`${memberColumn.workspace}`)
+    await sheetServices.appendSheet(authorization, memberColumn.sheetId, range, [["=ROW()", name, undefined, undefined, lineId, "member", 0, undefined]])
+}
+
 export const getMemberById = async function(memberId: string): Promise<Member>
 {
     const auth = await sheetServices.authorize()

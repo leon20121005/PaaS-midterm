@@ -8,6 +8,7 @@ import * as queryString from "query-string"
 
 import { LINE, DIALOGFLOW } from "./chatbotConfig"
 import * as actionServices from "./actionServices"
+import * as contactServices from "./contactServices"
 import * as groupServices from "./groupServices"
 import * as dailyDrawServices from "./dailyDrawServices"
 import * as movieServices from "./moviesServices"
@@ -81,7 +82,7 @@ const eventDispatcher = function(event: WebhookEvent): void
     }
 }
 
-const follow = (userId: string, replyToken: string, timestamp: number): void => console.log("follow")
+const follow = (userId: string, replyToken: string, timestamp: number): void => setDialogflowEvent(userId, "follow", replyToken, timestamp)
 
 const unfollow = (userId: string): void => console.log("unfollow")
 
@@ -181,6 +182,24 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
         case "showIndex":
             actionServices.showIndex(replyToken)
             break
+        case "sendTextToMember":
+            lineMessage = lineServices.toTextMessage(response)
+            lineServices.replyMessage(replyToken, lineMessage)
+            break
+        case "bindMember":
+            await contactServices.bindMember(parameters.name, userId)
+            lineMessage = lineServices.toTextMessage("綁定成功")
+            lineServices.replyMessage(replyToken, lineMessage)
+            break
+        case "sendTextToGroup":
+            lineMessage = lineServices.toTextMessage(response)
+            lineServices.replyMessage(replyToken, lineMessage)
+            break
+        case "bindGroup":
+            await groupServices.bindGroup(parameters.name, groupId)
+            lineMessage = lineServices.toTextMessage("綁定成功")
+            lineServices.replyMessage(replyToken, lineMessage)
+            break
         case "dailyDraw":
             dailyDrawServices.dailyDraw(userId, replyToken, timestamp)
             break
@@ -198,13 +217,6 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
             const tickets = await reservationServices.getTicketsByUserId(userId)
             lineMessage = lineServices.toTicketsFlexCarousel(tickets)
             lineServices.replyMessage(replyToken, lineMessage)
-            break
-        case "sendTextToGroup":
-            lineMessage = lineServices.toTextMessage(response)
-            lineServices.replyMessage(replyToken, lineMessage)
-            break
-        case "bindGroup":
-            await groupServices.bindGroup(parameters.name, groupId)
             break
         default:
             lineMessage = lineServices.toTextMessage(getErrorMessage(-2))

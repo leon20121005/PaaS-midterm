@@ -5,7 +5,7 @@ import * as screeningsServices from "./screeningsServices"
 
 import * as sheetServices from "./sheetServices"
 import { reservationColumn } from "./sheetColumnConfig"
-import { Reservation } from "./model";
+import { Reservation } from "./model"
 
 export const reserveTickets = async function(screeningId: number, userId: string): Promise<void>
 {

@@ -77,3 +77,10 @@ export class Group
     name: string
     lineId: string
 }
+
+export class Prize
+{
+    id: number
+    serialNumber: string
+    memberId: string
+}
