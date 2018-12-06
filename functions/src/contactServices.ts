@@ -11,6 +11,28 @@ export const bindMember = async function(name: string, lineId: string): Promise<
     await sheetServices.appendSheet(authorization, memberColumn.sheetId, range, [["=ROW()", name, undefined, undefined, lineId, "member", 0, undefined]])
 }
 
+export const getMembersLineId = async function(): Promise<Member[]>
+{
+    const auth = await sheetServices.authorize()
+    const query = `select ${memberColumn.id}, ` +
+        `${memberColumn.lineId}`
+    const values = await sheetServices.querySheet(auth, query, memberColumn.sheetId, memberColumn.gid)
+
+    if (!values.length)
+    {
+        return null
+    }
+    const members = []
+    for (let value of values)
+    {
+        const member = new Member()
+        member.id = Number(value[0])
+        member.lineId = value[1]
+        members.push(member)
+    }
+    return members
+}
+
 export const getMemberById = async function(memberId: string): Promise<Member>
 {
     const auth = await sheetServices.authorize()
@@ -30,7 +52,7 @@ export const getMemberById = async function(memberId: string): Promise<Member>
         return null
     }
     const member = new Member()
-    member.id = values[0][0]
+    member.id = Number(values[0][0])
     member.name = values[0][1]
     member.phone = values[0][2]
     member.email = values[0][3]
@@ -60,7 +82,7 @@ export const getMemberByUserId = async function(lineId: string): Promise<Member>
         return null
     }
     const member = new Member()
-    member.id = values[0][0]
+    member.id = Number(values[0][0])
     member.name = values[0][1]
     member.phone = values[0][2]
     member.email = values[0][3]

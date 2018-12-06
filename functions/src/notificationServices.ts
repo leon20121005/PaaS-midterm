@@ -6,7 +6,7 @@ import * as moment from "moment-timezone"
 import * as groupServices from "./groupServices"
 import * as reservationServices from "./reservationServices"
 import * as lineServices from "./lineServices"
-import { Reservation } from './model'
+import { Reservation } from "./model"
 
 export const reportAttendance = functions.https.onRequest(async function(request, response): Promise<void>
 {

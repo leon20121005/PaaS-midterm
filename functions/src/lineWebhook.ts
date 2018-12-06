@@ -41,7 +41,7 @@ export const chatbotWebhook = functions.https.onRequest(function(request, respon
 
 const eventDispatcher = function(event: WebhookEvent): void
 {
-    let userId = event.source.userId
+    const userId = event.source.userId
     const timestamp = event.timestamp
     console.log("In lineWebhook.eventDispatcher: " + userId)
     switch (event.type)
@@ -215,8 +215,20 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
             break
         case "showTickets":
             const tickets = await reservationServices.getTicketsByUserId(userId)
+            if (tickets == null)
+            {
+                lineServices.replyMessage(replyToken, lineServices.toTextMessage("尚無訂票"))
+                break
+            }
             lineMessage = lineServices.toTicketsFlexCarousel(tickets)
             lineServices.replyMessage(replyToken, lineMessage)
+            break
+        case "post":
+            const members = await contactServices.getMembersLineId()
+            for (let member of members)
+            {
+                lineServices.pushMessage(member.lineId, lineServices.toImageMessage(parameters.url, parameters.url))
+            }
             break
         default:
             lineMessage = lineServices.toTextMessage(getErrorMessage(-2))
