@@ -13,6 +13,7 @@ import * as dailyDrawService from "./dailyDrawService"
 import * as movieService from "./movieService"
 import * as cinemaService from "./cinemaService"
 import * as reservationService from "./reservationService"
+import * as prizeService from "./prizeService"
 import * as lineService from "./lineService"
 
 const sessionClient = new dialogflow.SessionsClient({ keyFilename: DIALOGFLOW.path })
@@ -106,6 +107,9 @@ const messageDispatcher = function(userId: string, userIntent: string, replyToke
             break
         case "訂票":
             actionDispatcher(userId, "showTickets", replyToken, timestamp)
+            break
+        case "兌獎":
+            actionDispatcher(userId, "showPrizes", replyToken, timestamp)
             break
         default:
             setDialogflowText(userId, userIntent, replyToken, timestamp, groupId)
@@ -205,6 +209,9 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
             break
         case "showTickets":
             reservationService.showUserTickets(userId, replyToken)
+            break
+        case "showPrizes":
+            prizeService.showUserPrizes(userId, replyToken)
             break
         case "post":
             contactService.post(parameters.url)

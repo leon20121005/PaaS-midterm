@@ -2,7 +2,7 @@ import { Client, Message } from "@line/bot-sdk"
 import * as moment from "moment-timezone"
 
 import { LINE } from "./chatbotConfig"
-import { Movie, Cinema, Screening, Reservation } from "./model/model"
+import { Movie, Cinema, Screening, Reservation, Prize } from "./model/model"
 
 const lineClient = new Client(LINE)
 
@@ -281,6 +281,62 @@ export const toTicketsFlexCarousel = function(tickets: Reservation[]): Message
                             {
                                 type: "text",
                                 text: `地址: ${ticket.screening.cinema.address}`,
+                                color: "#666666",
+                                size: "sm"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+        columns.push(contents)
+    }
+    const flexMessage: Message = {
+        type: "flex",
+        altText: "flex message",
+        contents: {
+            type: "carousel",
+            contents: columns
+        }
+    }
+    return flexMessage
+}
+
+export const toPrizesFlexCarousel = function(prizes: Prize[]): Message
+{
+    const columns = []
+    for (let prize of prizes)
+    {
+        const contents = {
+            type: "bubble",
+            body: {
+                type: "box",
+                layout: "vertical",
+                spacing: "md",
+                contents: [
+                    {
+                        type: "box",
+                        layout: "vertical",
+                        contents: [
+                            {
+                                type: "image",
+                                url: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${prize.serialNumber}`
+                            }
+                        ]
+                    },
+                    {
+                        type: "box",
+                        layout: "vertical",
+                        contents: [
+                            {
+                                type: "text",
+                                text: `序號: ${prize.serialNumber}`,
+                                color: "#666666",
+                                size: "sm"
+                            },
+                            {
+                                type: "text",
+                                text: `時間: ${moment().tz("Asia/Taipei").format("YYYY-MM-DD hh:mm")}`,
                                 color: "#666666",
                                 size: "sm"
                             }
