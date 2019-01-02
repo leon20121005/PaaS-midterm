@@ -2,7 +2,7 @@ import * as memberModel from "./memberModel"
 
 import * as sheetServices from "./sheetServices"
 import { prizeColumn } from "./sheetColumnConfig"
-import { Prize, Member } from "./model"
+import { Prize } from "./model"
 
 export const getAvailablePrize = async function(): Promise<Prize>
 {
@@ -20,15 +20,14 @@ export const getAvailablePrize = async function(): Promise<Prize>
     const prize = new Prize()
     prize.id = Number(values[0][0])
     prize.serialNumber = values[0][1]
-    prize.memberId = values[0][2]
     return prize
 }
 
-export const writeWinner = async function(prize: Prize, member: Member): Promise<void>
+export const writeWinner = async function(prize: Prize): Promise<void>
 {
     const authorization = await sheetServices.authorize()
     const range = encodeURI(`${prizeColumn.workspace}!${prizeColumn.memberId}${prize.id}`)
-    await sheetServices.writeSheet(authorization, prizeColumn.sheetId, range, [[member.id]])
+    await sheetServices.writeSheet(authorization, prizeColumn.sheetId, range, [[prize.member.id]])
 }
 
 export const getPrizesByUserId = async function(userId: string): Promise<Prize[]>
@@ -52,7 +51,7 @@ export const getPrizesByUserId = async function(userId: string): Promise<Prize[]
         const prize = new Prize()
         prize.id = Number(value[0])
         prize.serialNumber = value[1]
-        prize.memberId = value[2]
+        prize.member = member
         prizes.push(prize)
     }
     return prizes

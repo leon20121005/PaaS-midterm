@@ -28,7 +28,8 @@ export const dailyDraw = async function(userId: string, replyToken: string, time
             if (getDrawResult())
             {
                 resultMessage = getWinningPrizeMessage(availablePrize.serialNumber, timestamp, member.dailyDraw.drawCount)
-                prizeModel.writeWinner(availablePrize, member)
+                availablePrize.member = member
+                prizeModel.writeWinner(availablePrize)
             }
             else
             {

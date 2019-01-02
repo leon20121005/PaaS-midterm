@@ -82,7 +82,7 @@ export class Prize
 {
     id: number
     serialNumber: string
-    memberId: string
+    member: Member
 }
 
 export const getConditionExpression = function(key: string, values: number | number[]): string
