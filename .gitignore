@@ -6,4 +6,4 @@ token.json
 serviceAccountKey.json
 firebase-debug.log
 functions/src/chatbotConfig.ts
-functions/src/sheetConfig.ts
+functions/src/model/sheetConfig.ts

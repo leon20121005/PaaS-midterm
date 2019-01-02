@@ -1,5 +1,3 @@
-const moduleName = "groupServices"
-
 import * as sheetServices from "./sheetServices"
 import { groupColumn } from "./sheetColumnConfig"
 import { Group } from "./model"

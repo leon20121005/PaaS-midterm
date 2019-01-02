@@ -1,9 +1,7 @@
-const moduleName = "screeningsServices"
+import { getConditionExpression } from "./model"
 
-import { getConditionExpression } from "./actionServices"
-
-import * as moviesServices from "./moviesServices"
-import * as cinemasServices from "./cinemasServices"
+import * as movieModel from "./movieModel"
+import * as cinemaModel from "./cinemaModel"
 
 import * as sheetServices from "./sheetServices"
 import { screeningColumn } from "./sheetColumnConfig"
@@ -25,13 +23,13 @@ export const getCinemasByMovieId = async function(movieId: number): Promise<Cine
     {
         cinemaIds.push(value)
     }
-    return cinemasServices.getCinemasById(cinemaIds)
+    return cinemaModel.getCinemasById(cinemaIds)
 }
 
 export const getScreenings = async function(movieId: number, cinemaId: number): Promise<Screening[]>
 {
-    const movie = await moviesServices.getMoviesById(movieId)
-    const cinema = await cinemasServices.getCinemasById(cinemaId)
+    const movie = await movieModel.getMoviesById(movieId)
+    const cinema = await cinemaModel.getCinemasById(cinemaId)
 
     const authorization = await sheetServices.authorize()
     const query = `select ${screeningColumn.id}, ` +
@@ -73,8 +71,8 @@ export const getScreeningsById = async function(screeningIds: number | number[])
     const screenings = []
     for (let value of values)
     {
-        const movie = await moviesServices.getMoviesById(value[1])
-        const cinema = await cinemasServices.getCinemasById(value[2])
+        const movie = await movieModel.getMoviesById(value[1])
+        const cinema = await cinemaModel.getCinemasById(value[2])
         const screening = new Screening()
         screening.id = Number(value[0])
         screening.movie = movie[0]

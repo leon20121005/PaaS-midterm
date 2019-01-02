@@ -1,37 +1,37 @@
-const moduleName = "notificationServices"
+const moduleName = "notificationService"
 
 import * as functions from "firebase-functions"
 import * as moment from "moment-timezone"
 
-import * as groupServices from "./groupServices"
-import * as reservationServices from "./reservationServices"
-import * as lineServices from "./lineServices"
-import { Reservation } from "./model"
+import * as groupModel from "./model/groupModel"
+import * as reservationModel from "./model/reservationModel"
+import * as lineService from "./lineService"
+import { Reservation } from "./model/model"
 
 export const reportAttendance = functions.https.onRequest(async function(request, response): Promise<void>
 {
     const memberCount = request.body.memberCount
     const totalDrawCount = request.body.totalDrawCount
-    const groups = await groupServices.getGroups()
+    const groups = await groupModel.getGroups()
     const message = getReportText(memberCount, totalDrawCount)
-    const lineMessage = lineServices.toTextMessage(message)
+    const lineMessage = lineService.toTextMessage(message)
     for (let group of groups)
     {
-        lineServices.pushMessage(group.lineId, lineMessage)
+        lineService.pushMessage(group.lineId, lineMessage)
     }
     response.sendStatus(200)
 })
 
 export const notifyReservation = functions.https.onRequest(async function(request, response): Promise<void>
 {
-    const tickets = await reservationServices.getTickets()
+    const tickets = await reservationModel.getTickets()
     for (let ticket of tickets)
     {
         if (isItAlmostShowtime(ticket))
         {
             const message = getNotificationText(ticket)
-            const lineMessage = lineServices.toTextMessage(message)
-            lineServices.pushMessage(ticket.member.lineId, lineMessage)
+            const lineMessage = lineService.toTextMessage(message)
+            lineService.pushMessage(ticket.member.lineId, lineMessage)
         }
     }
     response.sendStatus(200)

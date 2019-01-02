@@ -1,6 +1,4 @@
-const moduleName = "cinemasServices"
-
-import { getConditionExpression } from "./actionServices"
+import { getConditionExpression } from "./model"
 
 import * as sheetServices from "./sheetServices"
 import { cinemaColumn } from "./sheetColumnConfig"

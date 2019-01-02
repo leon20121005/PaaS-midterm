@@ -1,5 +1,5 @@
 import * as lineWebhook from "./lineWebhook"
-import * as notificationServices from "./notificationServices"
+import * as notificationService from "./notificationService"
 export const chatbotWebhook = lineWebhook.chatbotWebhook
-export const reportAttendance = notificationServices.reportAttendance
-export const notifyReservation = notificationServices.notifyReservation
+export const reportAttendance = notificationService.reportAttendance
+export const notifyReservation = notificationService.notifyReservation

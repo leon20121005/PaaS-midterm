@@ -1,5 +1,3 @@
-const moduleName = "contactServices"
-
 import * as sheetServices from "./sheetServices"
 import { memberColumn } from "./sheetColumnConfig"
 import { Member } from "./model"

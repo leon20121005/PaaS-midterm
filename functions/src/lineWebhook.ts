@@ -7,15 +7,13 @@ import * as structjson from "./structjson"
 import * as queryString from "query-string"
 
 import { LINE, DIALOGFLOW } from "./chatbotConfig"
-import * as actionServices from "./actionServices"
-import * as contactServices from "./contactServices"
-import * as groupServices from "./groupServices"
-import * as dailyDrawServices from "./dailyDrawServices"
-import * as movieServices from "./moviesServices"
-import * as cinemasServices from "./cinemasServices"
-import * as screeningsServices from "./screeningsServices"
-import * as reservationServices from "./reservationServices"
-import * as lineServices from "./lineServices"
+import * as actionService from "./actionService"
+import * as contactService from "./contactService"
+import * as dailyDrawService from "./dailyDrawService"
+import * as movieService from "./movieService"
+import * as cinemaService from "./cinemaService"
+import * as reservationService from "./reservationService"
+import * as lineService from "./lineService"
 
 const sessionClient = new dialogflow.SessionsClient({ keyFilename: DIALOGFLOW.path })
 
@@ -180,59 +178,40 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
     switch (action)
     {
         case "showIndex":
-            actionServices.showIndex(replyToken)
+            actionService.showIndex(replyToken)
             break
         case "sendTextToMember":
-            lineMessage = lineServices.toTextMessage(response)
-            lineServices.replyMessage(replyToken, lineMessage)
+            lineMessage = lineService.toTextMessage(response)
+            lineService.replyMessage(replyToken, lineMessage)
             break
         case "bindMember":
-            await contactServices.bindMember(parameters.name, userId)
-            lineMessage = lineServices.toTextMessage("綁定成功")
-            lineServices.replyMessage(replyToken, lineMessage)
+            contactService.bindMember(parameters.name, userId, replyToken)
             break
         case "sendTextToGroup":
-            lineMessage = lineServices.toTextMessage(response)
-            lineServices.replyMessage(replyToken, lineMessage)
+            lineMessage = lineService.toTextMessage(response)
+            lineService.replyMessage(replyToken, lineMessage)
             break
         case "bindGroup":
-            await groupServices.bindGroup(parameters.name, groupId)
-            lineMessage = lineServices.toTextMessage("綁定成功")
-            lineServices.replyMessage(replyToken, lineMessage)
+            contactService.bindGroup(parameters.name, groupId, replyToken)
             break
         case "dailyDraw":
-            dailyDrawServices.dailyDraw(userId, replyToken, timestamp)
+            dailyDrawService.dailyDraw(userId, replyToken, timestamp)
             break
         case "showMovies":
-            const movies = await movieServices.getMoviesByReleaseDate()
-            lineMessage = lineServices.toMoviesCarousel(movies)
-            lineServices.replyMessage(replyToken, lineMessage)
+            movieService.showMoviesByReleaseDate(replyToken)
             break
         case "showCinemas":
-            const cinemas = await cinemasServices.getCinemas()
-            lineMessage = lineServices.toCinemasCarousel(cinemas)
-            lineServices.replyMessage(replyToken, lineMessage)
+            cinemaService.showCinemas(replyToken)
             break
         case "showTickets":
-            const tickets = await reservationServices.getTicketsByUserId(userId)
-            if (tickets == null)
-            {
-                lineServices.replyMessage(replyToken, lineServices.toTextMessage("尚無訂票"))
-                break
-            }
-            lineMessage = lineServices.toTicketsFlexCarousel(tickets)
-            lineServices.replyMessage(replyToken, lineMessage)
+            reservationService.showUserTickets(userId, replyToken)
             break
         case "post":
-            const members = await contactServices.getMembersLineId()
-            for (let member of members)
-            {
-                lineServices.pushMessage(member.lineId, lineServices.toImageMessage(parameters.url, parameters.url))
-            }
+            contactService.post(parameters.url)
             break
         default:
-            lineMessage = lineServices.toTextMessage(getErrorMessage(-2))
-            lineServices.replyMessage(replyToken, lineMessage)
+            lineMessage = lineService.toTextMessage(getErrorMessage(-2))
+            lineService.replyMessage(replyToken, lineMessage)
             break
     }
 }
@@ -240,38 +219,23 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
 const postbackDispatcher = async function(userId: string, postbackData: string): Promise<void>
 {
     console.log(postbackData)
-    let lineMessage
     const postback = queryString.parse(postbackData)
     switch (postback.action)
     {
         case "reserveTickets":
             if (Object.keys(postback).length == 2)
             {
-                const movies = await movieServices.getMoviesById(postback.movieId)
-                const cinemas = await screeningsServices.getCinemasByMovieId(postback.movieId)
-                if (cinemas == null)
-                {
-                    lineMessage = lineServices.toTextMessage("票已售完")
-                    lineServices.pushMessage(userId, lineMessage)
-                }
-                else
-                {
-                    lineMessage = lineServices.toChoosingCinemaCarousel(movies[0], cinemas)
-                    lineServices.pushMessage(userId, lineMessage)
-                }
+                reservationService.showMatchedCinemas(postback.movieId, userId)
             }
             else if (Object.keys(postback).length == 3)
             {
-                const screenings = await screeningsServices.getScreenings(postback.movieId, postback.cinemaId)
-                lineMessage = lineServices.toConfirmingScreeningCarousel(screenings)
-                lineServices.pushMessage(userId, lineMessage)
+                reservationService.showMatchedScreenings(postback.movieId, postback.cinemaId, userId)
             }
             else if (Object.keys(postback).length == 4)
             {
-                await reservationServices.reserveTickets(postback.screeningId, userId)
-                lineMessage = lineServices.toTextMessage("訂票成功")
-                lineServices.pushMessage(userId, lineMessage)
+                reservationService.reserveTickets(postback.screeningId, userId)
             }
+            break
         default:
             break
     }

@@ -1,7 +1,5 @@
-const moduleName = "reservationServices"
-
-import * as contactServices from "./contactServices"
-import * as screeningsServices from "./screeningsServices"
+import * as memberModel from "./memberModel"
+import * as screeningModel from "./screeningModel"
 
 import * as sheetServices from "./sheetServices"
 import { reservationColumn } from "./sheetColumnConfig"
@@ -9,7 +7,7 @@ import { Reservation } from "./model"
 
 export const reserveTickets = async function(screeningId: number, userId: string): Promise<void>
 {
-    const member = await contactServices.getMemberByUserId(userId)
+    const member = await memberModel.getMemberByUserId(userId)
 
     const authorization = await sheetServices.authorize()
     const range = encodeURI(`${reservationColumn.workspace}`)
@@ -31,8 +29,8 @@ export const getTickets = async function(): Promise<Reservation[]>
     const reservations = []
     for (let value of values)
     {
-        const screening = await screeningsServices.getScreeningsById(value[1])
-        const member = await contactServices.getMemberById(value[2])
+        const screening = await screeningModel.getScreeningsById(value[1])
+        const member = await memberModel.getMemberById(value[2])
         const reservation = new Reservation()
         reservation.id = value[0]
         reservation.screening = screening[0]
@@ -44,7 +42,7 @@ export const getTickets = async function(): Promise<Reservation[]>
 
 export const getTicketsByUserId = async function(userId: string): Promise<Reservation[]>
 {
-    const member = await contactServices.getMemberByUserId(userId)
+    const member = await memberModel.getMemberByUserId(userId)
 
     const authorization = await sheetServices.authorize()
     const query = `select ${reservationColumn.id}, ` +
@@ -60,8 +58,8 @@ export const getTicketsByUserId = async function(userId: string): Promise<Reserv
     const reservations = []
     for (let value of values)
     {
-        const screening = await screeningsServices.getScreeningsById(value[1])
-        const member = await contactServices.getMemberById(value[2])
+        const screening = await screeningModel.getScreeningsById(value[1])
+        const member = await memberModel.getMemberById(value[2])
         const reservation = new Reservation()
         reservation.id = value[0]
         reservation.screening = screening[0]

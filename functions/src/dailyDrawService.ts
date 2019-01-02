@@ -1,16 +1,16 @@
-const moduleName = "dailyDrawServices"
+const moduleName = "dailyDrawService"
 
 import * as moment from "moment-timezone"
 
-import * as contactServices from "./contactServices"
-import * as prizesServices from "./prizesServices"
-import * as lineServices from "./lineServices"
-import { Member } from "./model"
+import * as memberModel from "./model/memberModel"
+import * as prizeModel from "./model/prizeModel"
+import * as lineService from "./lineService"
+import { Member } from "./model/model"
 
 export const dailyDraw = async function(userId: string, replyToken: string, timestamp: number): Promise<void>
 {
     let resultMessage
-    const member = await contactServices.getMemberByUserId(userId)
+    const member = await memberModel.getMemberByUserId(userId)
 
     if (!isDailyDrawAvailable(member, timestamp))
     {
@@ -21,14 +21,14 @@ export const dailyDraw = async function(userId: string, replyToken: string, time
     {
         member.dailyDraw.drawCount++
         member.dailyDraw.lastDrawTime = timestamp
-        contactServices.updateMemberDailyDraw(member)
-        const availablePrize = await prizesServices.getAvailablePrize()
+        memberModel.updateMemberDailyDraw(member)
+        const availablePrize = await prizeModel.getAvailablePrize()
         if (availablePrize != null)
         {
             if (getDrawResult())
             {
                 resultMessage = getWinningPrizeMessage(availablePrize.serialNumber, timestamp, member.dailyDraw.drawCount)
-                prizesServices.writeWinner(availablePrize, member)
+                prizeModel.writeWinner(availablePrize, member)
             }
             else
             {
@@ -40,8 +40,8 @@ export const dailyDraw = async function(userId: string, replyToken: string, time
             resultMessage = getLosingPrizeMessage(timestamp, member.dailyDraw.drawCount)
         }
     }
-    const lineMessage = lineServices.toTextMessage(resultMessage)
-    lineServices.replyMessage(replyToken, lineMessage)
+    const lineMessage = lineService.toTextMessage(resultMessage)
+    lineService.replyMessage(replyToken, lineMessage)
 }
 
 const isDailyDrawAvailable = function(member: Member, timestamp: number): boolean

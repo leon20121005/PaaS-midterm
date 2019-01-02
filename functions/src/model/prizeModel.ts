@@ -1,5 +1,3 @@
-const moduleName = "prizesServices"
-
 import * as sheetServices from "./sheetServices"
 import { prizeColumn } from "./sheetColumnConfig"
 import { Prize, Member } from "./model"
