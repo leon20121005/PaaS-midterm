@@ -28,9 +28,9 @@ export const showMatchedScreenings = async function(movieId: number, cinemaId: n
     lineService.pushMessage(userId, lineMessage)
 }
 
-export const reserveTickets = async function(screeningId: number, userId: string): Promise<void>
+export const reserveTickets = async function(screeningId: number, userId: string, timestamp: number): Promise<void>
 {
-    await reservationModel.reserveTickets(screeningId, userId)
+    await reservationModel.reserveTickets(screeningId, userId, timestamp)
     const lineMessage = lineService.toTextMessage("訂票成功")
     lineService.pushMessage(userId, lineMessage)
 }

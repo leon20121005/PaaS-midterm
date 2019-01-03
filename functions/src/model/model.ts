@@ -62,6 +62,7 @@ export class Reservation
     id: number
     screening: Screening
     member: Member
+    time: number
 }
 
 export class Rating
@@ -83,6 +84,7 @@ export class Prize
     id: number
     serialNumber: string
     member: Member
+    time: number
 }
 
 export const getConditionExpression = function(key: string, values: number | number[]): string

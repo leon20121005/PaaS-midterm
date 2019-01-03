@@ -52,7 +52,8 @@ export const reservationColumn = {
     gid: "1008750585",
     id: "A",
     screeningId: "B",
-    memberId: "C"
+    memberId: "C",
+    time: "D"
 }
 
 export const groupColumn = {
@@ -70,5 +71,6 @@ export const prizeColumn = {
     gid: "689761964",
     id: "A",
     serial: "B",
-    memberId: "C"
+    memberId: "C",
+    time: "D"
 }

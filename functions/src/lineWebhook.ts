@@ -58,7 +58,7 @@ const eventDispatcher = function(event: WebhookEvent): void
             }
             break
         case "postback":
-            postbackDispatcher(userId, event.postback.data)
+            postbackDispatcher(userId, event.postback.data, timestamp)
             break
         case "follow":
             follow(userId, event.replyToken, timestamp)
@@ -223,7 +223,7 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
     }
 }
 
-const postbackDispatcher = async function(userId: string, postbackData: string): Promise<void>
+const postbackDispatcher = async function(userId: string, postbackData: string, timestamp: number): Promise<void>
 {
     console.log(postbackData)
     const postback = queryString.parse(postbackData)
@@ -240,7 +240,7 @@ const postbackDispatcher = async function(userId: string, postbackData: string):
             }
             else if (Object.keys(postback).length == 4)
             {
-                reservationService.reserveTickets(postback.screeningId, userId)
+                reservationService.reserveTickets(postback.screeningId, userId, timestamp)
             }
             break
         default:

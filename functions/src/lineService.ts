@@ -268,7 +268,13 @@ export const toTicketsFlexCarousel = function(tickets: Reservation[]): Message
                             },
                             {
                                 type: "text",
-                                text: `時間: ${moment(ticket.screening.showtime).tz("Asia/Taipei").format("YYYY-MM-DD hh:mm")}`,
+                                text: `交易時間: ${moment(ticket.time).tz("Asia/Taipei").format("YYYY-MM-DD hh:mm")}`,
+                                color: "#666666",
+                                size: "sm"
+                            },
+                            {
+                                type: "text",
+                                text: `放映時間: ${moment(ticket.screening.showtime).tz("Asia/Taipei").format("YYYY-MM-DD hh:mm")}`,
                                 color: "#666666",
                                 size: "sm"
                             },
@@ -336,7 +342,7 @@ export const toPrizesFlexCarousel = function(prizes: Prize[]): Message
                             },
                             {
                                 type: "text",
-                                text: `時間: ${moment().tz("Asia/Taipei").format("YYYY-MM-DD hh:mm")}`,
+                                text: `中獎時間: ${moment(prize.time).tz("Asia/Taipei").format("YYYY-MM-DD hh:mm")}`,
                                 color: "#666666",
                                 size: "sm"
                             }
