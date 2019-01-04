@@ -1,5 +1,6 @@
 const moduleName = "contactService"
 
+import { ANGULAR_URL } from "./chatbotConfig"
 import * as memberModel from "./model/memberModel"
 import * as groupModel from "./model/groupModel"
 import * as lineService from "./lineService"
@@ -8,6 +9,12 @@ export const bindMember = async function(name: string, lineId: string, replyToke
 {
     await memberModel.bindMember(name, lineId)
     const lineMessage = lineService.toTextMessage("綁定成功")
+    lineService.replyMessage(replyToken, lineMessage)
+}
+
+export const registerMember = async function(lineId: string, replyToken: string): Promise<void>
+{
+    const lineMessage = lineService.toTextMessage(`${ANGULAR_URL}/register?lineid=${lineId}`)
     lineService.replyMessage(replyToken, lineMessage)
 }
 

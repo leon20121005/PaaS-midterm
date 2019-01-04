@@ -81,7 +81,10 @@ const eventDispatcher = function(event: WebhookEvent): void
     }
 }
 
-const follow = (userId: string, replyToken: string, timestamp: number): void => setDialogflowEvent(userId, "follow", replyToken, timestamp)
+const follow = function(userId: string, replyToken: string, timestamp: number): void
+{
+    actionDispatcher(userId, "registerMember", replyToken, timestamp)
+}
 
 const unfollow = (userId: string): void => console.log("unfollow")
 
@@ -190,6 +193,9 @@ const actionDispatcher = async function(userId: string, action: string, replyTok
             break
         case "bindMember":
             contactService.bindMember(parameters.name, userId, replyToken)
+            break
+        case "registerMember":
+            contactService.registerMember(userId, replyToken)
             break
         case "sendTextToGroup":
             lineMessage = lineService.toTextMessage(response)
