@@ -1,0 +1,25 @@
+<div class="card">
+    <h5 class="card-header">成員註冊</h5>
+    <div class="card-body">
+        <form class="section">
+            <ng-container>
+                姓名：
+                <input type="text" class="form-control" [(ngModel)]="member.name" [ngModelOptions]="{standalone: true}">
+                手機：
+                <input type="text" class="form-control" [(ngModel)]="member.phone" [ngModelOptions]="{standalone: true}">
+                郵件：
+                <input type="text" class="form-control" [(ngModel)]="member.email" [ngModelOptions]="{standalone: true}">
+                Line ID：
+                <input type="text" class="form-control-plaintext" [(ngModel)]="member.lineId" [ngModelOptions]="{standalone: true}" readonly>
+                <div class="form-group row">
+                    <div class="col-sm" style="text-align: center">
+                        <input type="submit" (click)="onSubmit()" class="btn btn-info" value="註冊">
+                    </div>
+                </div>
+            </ng-container>
+            <div style="color: red; text-align: center;">
+                <p [innerHTML]="errorMessage"></p>
+            </div>
+        </form>
+    </div>
+</div>

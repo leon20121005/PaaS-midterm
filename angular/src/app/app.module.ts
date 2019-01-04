@@ -1,18 +1,36 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { BrowserModule } from "@angular/platform-browser"
+import { NgModule } from "@angular/core"
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+// 設定Form的資料繫結
+import { FormsModule } from "@angular/forms"
+
+// 設定AngularFirestore
+import { config } from "../environments/config"
+import { AngularFireModule } from "@angular/fire"
+import { AngularFirestoreModule } from "@angular/fire/firestore"
+
+import { AppRoutingModule } from "./app-routing.module"
+import { AppComponent } from "./app.component"
+
+import { RegisterComponent } from "./register.component"
+import { ModelService } from "./services/modelService"
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        RegisterComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        AngularFireModule.initializeApp(config.firebaseConfig),
+        AngularFirestoreModule
+    ],
+    providers: [ModelService],
+    bootstrap: [AppComponent]
 })
-export class AppModule { }
+
+export class AppModule
+{
+}
