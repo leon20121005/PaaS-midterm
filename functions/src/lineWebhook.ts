@@ -249,6 +249,12 @@ const postbackDispatcher = async function(userId: string, postbackData: string, 
                 reservationService.reserveTickets(postback.screeningId, userId, timestamp)
             }
             break
+        case "checkTickets":
+            reservationService.checkTickets(postback.reservationId, userId)
+            break
+        case "cancelTickets":
+            reservationService.cancelTickets(postback.reservationId, userId)
+            break
         default:
             break
     }

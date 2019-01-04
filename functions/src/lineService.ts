@@ -293,6 +293,29 @@ export const toTicketsFlexCarousel = function(tickets: Reservation[]): Message
                         ]
                     }
                 ]
+            },
+            footer: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                    {
+                        type: "button",
+                        action: {
+                            type: "postback",
+                            label: "行動驗票",
+                            data: `action=checkTickets&reservationId=${ticket.id}`
+                        }
+                    },
+                    {
+                        type: "button",
+                        action: {
+                            type: "postback",
+                            label: "取消訂票",
+                            data: `action=cancelTickets&reservationId=${ticket.id}`
+                        },
+                        color: "#ff0000"
+                    }
+                ]
             }
         }
         columns.push(contents)

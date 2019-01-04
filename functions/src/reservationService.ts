@@ -46,3 +46,22 @@ export const showUserTickets = async function(userId: string, replyToken: string
     const lineMessage = lineService.toTicketsFlexCarousel(tickets)
     lineService.replyMessage(replyToken, lineMessage)
 }
+
+export const checkTickets = async function(reservationId: number, userId: string): Promise<void>
+{
+    const tickets = await reservationModel.getTicketsById(reservationId)
+    if (tickets == null)
+    {
+        lineService.pushMessage(userId, lineService.toTextMessage("查無訂票"))
+        return
+    }
+    const url = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${tickets[0].id}`
+    const lineMessage = lineService.toImageMessage(url, url)
+    lineService.pushMessage(userId, lineMessage)
+}
+
+export const cancelTickets = async function(reservationId: number, userId: string): Promise<void>
+{
+    await reservationModel.deleteTicketsById(reservationId)
+    lineService.pushMessage(userId, lineService.toTextMessage("訂票取消成功"))
+}
