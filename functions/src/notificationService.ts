@@ -3,10 +3,10 @@ const moduleName = "notificationService"
 import * as functions from "firebase-functions"
 import * as moment from "moment-timezone"
 
-import * as groupModel from "./model/groupModel"
-import * as reservationModel from "./model/reservationModel"
+import * as groupModel from "./firestoreModels/groupModel"
+import * as reservationModel from "./firestoreModels/reservationModel"
 import * as lineService from "./lineService"
-import { Reservation } from "./model/model"
+import { Reservation } from "./firestoreModels/model"
 
 export const reportAttendance = functions.https.onRequest(async function(request, response): Promise<void>
 {

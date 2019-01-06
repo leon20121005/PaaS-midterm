@@ -250,10 +250,10 @@ const postbackDispatcher = async function(userId: string, postbackData: string, 
             }
             break
         case "checkTickets":
-            reservationService.checkTickets(postback.reservationId, userId)
+            reservationService.checkTicket(postback.reservationId, userId)
             break
         case "cancelTickets":
-            reservationService.cancelTickets(postback.reservationId, userId)
+            reservationService.cancelTicket(postback.reservationId, userId)
             break
         default:
             break

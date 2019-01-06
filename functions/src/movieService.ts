@@ -1,6 +1,6 @@
 const moduleName = "movieService"
 
-import * as movieModel from "./model/movieModel"
+import * as movieModel from "./firestoreModels/movieModel"
 import * as lineService from "./lineService"
 
 export const showMoviesByReleaseDate = async function(replyToken: string): Promise<void>

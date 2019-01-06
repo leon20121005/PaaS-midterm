@@ -1,13 +1,13 @@
 const moduleName = "reservationService"
 
-import * as movieModel from "./model/movieModel"
-import * as screeningModel from "./model/screeningModel"
-import * as reservationModel from "./model/reservationModel"
+import * as movieModel from "./firestoreModels/movieModel"
+import * as screeningModel from "./firestoreModels/screeningModel"
+import * as reservationModel from "./firestoreModels/reservationModel"
 import * as lineService from "./lineService"
 
-export const showMatchedCinemas = async function(movieId: number, userId: string): Promise<void>
+export const showMatchedCinemas = async function(movieId: string, userId: string): Promise<void>
 {
-    const movies = await movieModel.getMoviesById(movieId)
+    const movie = await movieModel.getMovieById(movieId)
     const cinemas = await screeningModel.getCinemasByMovieId(movieId)
     if (cinemas == null)
     {
@@ -16,12 +16,12 @@ export const showMatchedCinemas = async function(movieId: number, userId: string
     }
     else
     {
-        const lineMessage = lineService.toChoosingCinemaCarousel(movies[0], cinemas)
+        const lineMessage = lineService.toChoosingCinemaCarousel(movie, cinemas)
         lineService.pushMessage(userId, lineMessage)
     }
 }
 
-export const showMatchedScreenings = async function(movieId: number, cinemaId: number, userId: string): Promise<void>
+export const showMatchedScreenings = async function(movieId: string, cinemaId: string, userId: string): Promise<void>
 {
     const screenings = await screeningModel.getScreenings(movieId, cinemaId)
     const lineMessage = lineService.toConfirmingScreeningCarousel(screenings)
@@ -47,21 +47,21 @@ export const showUserTickets = async function(userId: string, replyToken: string
     lineService.replyMessage(replyToken, lineMessage)
 }
 
-export const checkTickets = async function(reservationId: number, userId: string): Promise<void>
+export const checkTicket = async function(reservationId: string, userId: string): Promise<void>
 {
-    const tickets = await reservationModel.getTicketsById(reservationId)
-    if (tickets == null)
+    const ticket = await reservationModel.getTicketById(reservationId)
+    if (ticket == null)
     {
         lineService.pushMessage(userId, lineService.toTextMessage("查無訂票"))
         return
     }
-    const url = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${tickets[0].id}`
+    const url = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticket.id}`
     const lineMessage = lineService.toImageMessage(url, url)
     lineService.pushMessage(userId, lineMessage)
 }
 
-export const cancelTickets = async function(reservationId: number, userId: string): Promise<void>
+export const cancelTicket = async function(reservationId: string, userId: string): Promise<void>
 {
-    await reservationModel.deleteTicketsById(reservationId)
+    await reservationModel.deleteTicketById(reservationId)
     lineService.pushMessage(userId, lineService.toTextMessage("訂票取消成功"))
 }

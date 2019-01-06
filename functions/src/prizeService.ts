@@ -1,6 +1,6 @@
 const moduleName = "prizeService"
 
-import * as prizeModel from "./model/prizeModel"
+import * as prizeModel from "./firestoreModels/prizeModel"
 import * as lineService from "./lineService"
 
 export const showUserPrizes = async function(userId: string, replyToken: string): Promise<void>

@@ -1,6 +1,6 @@
 const moduleName = "cinemaService"
 
-import * as cinemaModel from "./model/cinemaModel"
+import * as cinemaModel from "./firestoreModels/cinemaModel"
 import * as lineService from "./lineService"
 
 export const showCinemas = async function(replyToken: string): Promise<void>

@@ -2,10 +2,10 @@ const moduleName = "dailyDrawService"
 
 import * as moment from "moment-timezone"
 
-import * as memberModel from "./model/memberModel"
-import * as prizeModel from "./model/prizeModel"
+import * as memberModel from "./firestoreModels/memberModel"
+import * as prizeModel from "./firestoreModels/prizeModel"
 import * as lineService from "./lineService"
-import { Member } from "./model/model"
+import { Member } from "./firestoreModels/model"
 
 export const dailyDraw = async function(userId: string, replyToken: string, timestamp: number): Promise<void>
 {

@@ -1,8 +1,8 @@
 const moduleName = "contactService"
 
 import { ANGULAR_URL } from "./chatbotConfig"
-import * as memberModel from "./model/memberModel"
-import * as groupModel from "./model/groupModel"
+import * as memberModel from "./firestoreModels/memberModel"
+import * as groupModel from "./firestoreModels/groupModel"
 import * as lineService from "./lineService"
 
 export const bindMember = async function(name: string, lineId: string, replyToken: string): Promise<void>

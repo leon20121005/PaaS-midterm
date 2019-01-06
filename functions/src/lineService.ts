@@ -2,7 +2,7 @@ import { Client, Message } from "@line/bot-sdk"
 import * as moment from "moment-timezone"
 
 import { LINE } from "./chatbotConfig"
-import { Movie, Cinema, Screening, Reservation, Prize } from "./model/model"
+import { Movie, Cinema, Screening, Reservation, Prize } from "./firestoreModels/model"
 
 const lineClient = new Client(LINE)
 
