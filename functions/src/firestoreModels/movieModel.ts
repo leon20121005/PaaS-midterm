@@ -41,6 +41,7 @@ const loadMovie = function(data): Movie
     movie.director = data.director
     movie.category = data.category
     movie.runtime = data.runtime
+    movie.url = data.url
     movie.thumbnail = data.thumbnail
     return movie
 }

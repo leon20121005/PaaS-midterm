@@ -246,7 +246,7 @@ const postbackDispatcher = async function(userId: string, postbackData: string, 
             }
             else if (Object.keys(postback).length == 4)
             {
-                reservationService.reserveTickets(postback.screeningId, userId, timestamp)
+                // reservationService.reserveTickets(postback.screeningId, userId, timestamp)
             }
             break
         case "checkTickets":

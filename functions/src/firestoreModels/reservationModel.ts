@@ -2,14 +2,16 @@ import * as firebaseAdmin from "firebase-admin"
 
 import * as memberModel from "./memberModel"
 import * as screeningModel from "./screeningModel"
+import * as seatModel from "./seatModel"
 import { Reservation } from "./model"
 
 const database = firebaseAdmin.firestore()
 
-export const reserveTickets = async function(screeningId: number, userId: string, timestamp: number): Promise<void>
+//
+export const reserveTickets = async function(screeningId: string, userId: string, seatId: string, timestamp: number): Promise<void>
 {
     const member = await memberModel.getMemberByUserId(userId)
-    await database.collection("reservation").add({ screeningId: screeningId, memberId: member.id, time: timestamp}).then(documentReference => {
+    await database.collection("reservation").add({ screeningId: screeningId, memberId: member.id, seatIds: [seatId], time: timestamp}).then(documentReference => {
         database.collection("reservation").doc(documentReference.id).update({ id: documentReference.id })
     })
 }
@@ -48,6 +50,11 @@ export const getTicketsByUserId = async function(userId: string): Promise<Reserv
                 const reservation = new Reservation()
                 reservation.id = document.data().id
                 reservation.screening = await screeningModel.getScreeningById(document.data().screeningId)
+                for (let seatId of document.data().seatIds)
+                {
+                    const seat = await seatModel.getSeatById(seatId)
+                    reservation.seats.push(seat)
+                }
                 reservation.member = member
                 reservation.time = document.data().time
                 reservations.push(reservation)

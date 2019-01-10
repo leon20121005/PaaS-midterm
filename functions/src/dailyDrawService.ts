@@ -60,7 +60,7 @@ const isDailyDrawAvailable = function(member: Member, timestamp: number): boolea
 
 const getDrawResult = function(): boolean
 {
-    if (Math.floor(Math.random() * 10) == 0)
+    if (Math.floor(Math.random() * 3) == 0)
     {
         return true
     }

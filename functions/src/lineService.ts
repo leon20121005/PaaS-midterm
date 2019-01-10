@@ -1,7 +1,7 @@
 import { Client, Message } from "@line/bot-sdk"
 import * as moment from "moment-timezone"
 
-import { LINE } from "./chatbotConfig"
+import { LINE, ANGULAR_URL } from "./chatbotConfig"
 import { Movie, Cinema, Screening, Reservation, Prize } from "./firestoreModels/model"
 
 const lineClient = new Client(LINE)
@@ -63,6 +63,27 @@ export const toStickerMessage = function(packageId: string, stickerId: string): 
     return stickerMessage
 }
 
+export const toButtonMessage = function(title: string, text: string, label: string, uri: string): Message
+{
+    const buttonMessage: Message = {
+        type: "template",
+        altText: "buttons template",
+        template: {
+            type: "buttons",
+            title: title,
+            text: text,
+            actions: [
+                {
+                    type: "uri",
+                    label: label,
+                    uri: uri
+                }
+            ]
+        }
+    }
+    return buttonMessage
+}
+
 export const toCarouselMessage = function(): Message
 {
     const functions = ["功能1", "功能2", "功能3"]
@@ -109,6 +130,11 @@ export const toMoviesCarousel = function(movies: Movie[]): Message
             text: getMovieInformationText(movie),
             // Max: 3
             actions: [
+                {
+                    type: "uri",
+                    label: "電影介紹",
+                    uri: `${movie.url}`
+                },
                 {
                     type: "postback",
                     label: "訂票",
@@ -199,7 +225,7 @@ export const toChoosingCinemaCarousel = function(movie: Movie, cinemas: Cinema[]
     return carouselMessage
 }
 
-export const toConfirmingScreeningCarousel = function(screenings: Screening[]): Message
+export const toConfirmingScreeningCarousel = function(screenings: Screening[], userId: string): Message
 {
     const columns = []
     for (let screening of screenings)
@@ -213,10 +239,15 @@ export const toConfirmingScreeningCarousel = function(screenings: Screening[]): 
             text: getScreeningInformationText(screening),
             // Max: 3
             actions: [
+                // {
+                //     type: "postback",
+                //     label: "確認場次",
+                //     data: `action=reserveTickets&movieId=${screening.movie.id}&cinemaId=${screening.cinema.id}&screeningId=${screening.id}`
+                // }
                 {
-                    type: "postback",
-                    label: "確認場次",
-                    data: `action=reserveTickets&movieId=${screening.movie.id}&cinemaId=${screening.cinema.id}&screeningId=${screening.id}`
+                    type: "uri",
+                    label: "選擇座位",
+                    uri: `${ANGULAR_URL}/reservation?screeningid=${screening.id}&lineid=${userId}`
                 }
             ]
         })
@@ -281,6 +312,12 @@ export const toTicketsFlexCarousel = function(tickets: Reservation[]): Message
                             {
                                 type: "text",
                                 text: `影城: ${ticket.screening.cinema.name}`,
+                                color: "#666666",
+                                size: "sm"
+                            },
+                            {
+                                type: "text",
+                                text: `座位: ${ticket.seats[0].hall.name} 廳 ${ticket.seats[0].row} 排 ${ticket.seats[0].column} 號`,
                                 color: "#666666",
                                 size: "sm"
                             },

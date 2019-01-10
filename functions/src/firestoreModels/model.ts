@@ -27,6 +27,7 @@ export class Movie
     director: string
     category: string
     runtime: number
+    url: string
     thumbnail: string
 }
 
@@ -38,6 +39,21 @@ export class Cinema
     phone: string
     thumbnail: string
 }
+
+export class Hall
+{
+    id: string
+    name: string
+    cinema: Cinema
+}
+
+export class Seat
+{
+    id: string
+    row: string
+    column: string
+    hall: Hall
+}   
 
 export class Screening
 {
@@ -58,9 +74,11 @@ export class Reservation
     {
         this.screening = new Screening()
         this.member = new Member()
+        this.seats = new Array<Seat>()
     }
     id: string
     screening: Screening
+    seats: Array<Seat>
     member: Member
     time: number
 }

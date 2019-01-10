@@ -14,7 +14,7 @@ export const bindMember = async function(name: string, lineId: string, replyToke
 
 export const registerMember = async function(lineId: string, replyToken: string): Promise<void>
 {
-    const lineMessage = lineService.toTextMessage(`${ANGULAR_URL}/register?lineid=${lineId}`)
+    const lineMessage = lineService.toButtonMessage("歡迎", "點選註冊以開啟帳戶", "註冊", `${ANGULAR_URL}/register?lineid=${lineId}`)
     lineService.replyMessage(replyToken, lineMessage)
 }
 
